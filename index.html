@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesa de Entrada Municipal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .auth-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .event-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .event-item:hover {
+            transform: translateX(5px);
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .event-title {
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .event-time {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .event-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .event-detail {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .event-detail strong {
+            color: #333;
+        }
+
+        .event-obs {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .event-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 15px;
+            font-size: 0.85em;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .event-item {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Mesa de Entrada Municipal</h1>
+            <p>Sistema de Gestión de Eventos y Trámites</p>
+        </div>
+
+        <div id="authSection" class="auth-section">
+            <h2>Conectar con Google Calendar</h2>
+            <p style="margin-bottom: 20px;">Para usar esta aplicación, necesitas autorizar el acceso a tu Google Calendar</p>
+            <button class="btn" onclick="handleAuth()">🔐 Conectar con Google</button>
+        </div>
+
+        <div id="mainContent" class="hidden">
+            <div class="content-grid">
+                <div class="card">
+                    <h2>➕ Nuevo Evento</h2>
+                    <div id="formMessage"></div>
+                    <form id="eventForm">
+                        <div class="form-group">
+                            <label for="eventTitle">Título del Trámite *</label>
+                            <input type="text" id="eventTitle" required placeholder="Ej: Solicitud de permiso de construcción">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="eventDate">Fecha *</label>
+                            <input type="date" id="eventDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventStartTime">Hora de Inicio *</label>
+                            <input type="time" id="eventStartTime" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventEndTime">Hora de Finalización *</label>
+                            <input type="time" id="eventEndTime" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventArea">Área/Destino *</label>
+                            <select id="eventArea" required>
+                                <option value="">Seleccionar área...</option>
+                                <option value="Acción Social">Acción Social</option>
+                                <option value="Cultura">Cultura</option>
+                                <option value="Deportes">Deportes</option>
+                                <option value="Hacienda">Hacienda</option>
+                                <option value="Tránsito">Tránsito</option>
+                                <option value="Obras Públicas">Obras Públicas</option>
+                                <option value="Particular">Particular</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventObs">Observaciones</label>
+                            <textarea id="eventObs" placeholder="Información adicional, notas, comentarios..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success" style="width: 100%;">💾 Guardar Evento</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>📅 Eventos Programados</h2>
+                    <div class="form-group" style="display:flex; gap:10px; align-items:end;">
+                         <div style="flex:1;">
+                             <label for="filterFrom">Desde</label>
+                             <input type="date" id="filterFrom">
+                        </div>
+                        <div style="flex:1;">
+                            <label for="filterTo">Hasta</label>
+                            <input type="date" id="filterTo">
+                        </div>
+                        <button class="btn btn-secondary btn-small" onclick="applyDateFilter()">Filtrar</button>
+                   </div>
+                    <button class="btn btn-secondary" onclick="loadEvents()" style="width: 100%; margin-bottom: 15px;">🔄 Actualizar Lista</button>
+                    <div id="eventsList" class="event-list">
+                        <div class="loading">Cargando eventos...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        const CLIENT_ID = '161798235486-d9048rv2p6j34lm32ajl29e44fgff5ev.apps.googleusercontent.com'; // REEMPLAZAR CON TU CLIENT ID
+        const API_KEY = 'AIzaSyAuhLWqkOqA-sXveBs4IplcRQT_qzURS_8'; // REEMPLAZAR CON TU API KEY
+        const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
+        const SCOPES = 'https://www.googleapis.com/auth/calendar';
+        const AREA_COLORS = {
+            "Acción Social": "9",      // azul
+            "Cultura": "3",            // violeta
+            "Deportes": "10",          // verde
+            "Hacienda": "2",           // verde oscuro
+            "Tránsito": "11",          // rojo
+            "Obras Públicas": "6",     // naranja
+            "Particular": "8",         // gris
+            "Otros": "7"               // gris claro
+        };
+
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+        let editingEventId = null;
+
+        // Inicializar Google API
+        function gapiLoaded() {
+            gapi.load('client', initializeGapiClient);
+        }
+
+        async function initializeGapiClient() {
+            await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [DISCOVERY_DOC],
+            });
+            gapiInited = true;
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: handleTokenResponse
+            });
+            gisInited = true;
+
+            // Auto-conectar si ya autorizó antes
+            if (localStorage.getItem('gcal_authorized') === 'true') {
+                tokenClient.requestAccessToken({ prompt: '' });
+            }
+        }
+
+        function handleAuth() {
+            tokenClient.callback = async (resp) => {
+                if (resp.error !== undefined) {
+                    throw (resp);
+                }
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                loadEvents();
+            };
+
+            if (gapi.client.getToken() === null) {
+                tokenClient.requestAccessToken({prompt: 'consent'});
+            } else {
+                tokenClient.requestAccessToken({ prompt: 'consent' });
+            }
+        }
+
+        async function handleTokenResponse(resp) {
+            if (resp.error !== undefined) {
+                console.error(resp);
+                return;
+            }
+
+            localStorage.setItem('gcal_authorized', 'true');
+
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+
+            loadEvents();
+        }
+
+        // Cargar eventos desde Google Calendar
+        async function loadEvents(timeMin = new Date().toISOString(), timeMax = null) {
+            const eventsList = document.getElementById('eventsList');
+            eventsList.innerHTML = '<div class="loading">Cargando eventos...</div>';
+
+            try {
+                const response = await gapi.client.calendar.events.list({
+                    'calendarId': '040e077de012fb2e93cdc723d706fbc8d1863695f3b039b4e5ba1c8d129f0c76@group.calendar.google.com',
+                    'timeMin': timeMin,
+                    ...(timeMax ? { timeMax } : {}),
+                    'showDeleted': false,
+                    'singleEvents': true,
+                    'maxResults': 50,
+                    'orderBy': 'startTime'
+                });
+
+                const events = response.result.items;
+                
+                events.sort((a, b) => {
+                    return new Date(a.start.dateTime) - new Date(b.start.dateTime);
+                });
+
+                if (events.length === 0) {
+                    eventsList.innerHTML = '<p style="text-align: center; color: #999;">No hay eventos programados</p>';
+                    return;
+                }
+
+                eventsList.innerHTML = '';
+                events.forEach(event => {
+                    const eventDiv = createEventElement(event);
+                    eventsList.appendChild(eventDiv);
+                });
+            } catch (err) {
+                console.error('Error loading events:', err);
+                eventsList.innerHTML = '<div class="error">Error al cargar eventos. Por favor, intenta nuevamente.</div>';
+            }
+        }
+
+        function applyDateFilter() {
+            const from = document.getElementById('filterFrom').value;
+            const to = document.getElementById('filterTo').value;
+
+            let timeMin = from ? new Date(from).toISOString() : new Date().toISOString();
+            let timeMax = to ? new Date(to + 'T23:59:59').toISOString() : null;
+
+            loadEvents(timeMin, timeMax);
+        }
+
+        function createEventElement(event) {
+            const div = document.createElement('div');
+            div.className = 'event-item';
+
+            const start = new Date(event.start.dateTime || event.start.date);
+            const end = new Date(event.end.dateTime || event.end.date);
+            const duration = Math.round((end - start) / (1000 * 60));
+
+            const area = event.extendedProperties?.private?.area || 'No especificada';
+            const now = new Date();
+            const status = end < now ? 'completed' : 'pending';
+            const obs = event.description || 'Sin observaciones';
+
+            div.innerHTML = `
+              <div class="event-card">
+                <div class="event-top">
+                  <div class="event-hour">
+                    🕒 ${start.toLocaleTimeString('es-AR', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                    –
+                    ${end.toLocaleTimeString('es-AR', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                  <span class="event-status ${status}">
+                    ${status === 'pending' ? '🟡 Pendiente' : '🟢 Completado'}
+                  </span>
+                </div>
+
+                <div class="event-title">
+                  📌 ${event.summary}
+                </div>
+
+                <div class="event-meta">
+                  📅 ${start.toLocaleDateString('es-AR')}
+                  &nbsp;&nbsp; 🏢 ${area}
+                </div>
+
+                ${event.description ? `
+                  <div class="event-desc">
+                    📝 ${event.description}
+                  </div>` : ''}
+
+                <div class="event-actions">
+                  <button class="btn btn-small" onclick="editEvent('${event.id}')">✏️ Editar</button>
+                  <button class="btn btn-small btn-delete" onclick="deleteEvent('${event.id}')">🗑️ Eliminar</button>
+                </div>
+              </div>
+            `;
+
+            return div;
+        }
+
+        // Eliminar evento
+        async function deleteEvent(eventId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este evento?')) {
+                return;
+            }
+
+            try {
+                await gapi.client.calendar.events.delete({
+                    'calendarId': '040e077de012fb2e93cdc723d706fbc8d1863695f3b039b4e5ba1c8d129f0c76@group.calendar.google.com',
+                    'eventId': eventId
+                });
+                showMessage('success', '✅ Evento eliminado exitosamente');
+                loadEvents();
+            } catch (err) {
+                console.error('Error deleting event:', err);
+                showMessage('error', '❌ Error al eliminar el evento');
+            }
+        }
+
+        async function editEvent(eventId) {
+            try {
+                const response = await gapi.client.calendar.events.get({
+                    calendarId: '040e077de012fb2e93cdc723d706fbc8d1863695f3b039b4e5ba1c8d129f0c76@group.calendar.google.com',
+                    eventId: eventId
+                });
+
+                const event = response.result;
+
+                const start = new Date(event.start.dateTime);
+                const end = new Date(event.end.dateTime);
+
+                document.getElementById('eventTitle').value = event.summary || '';
+                document.getElementById('eventDate').value = start.toISOString().split('T')[0];
+                document.getElementById('eventStartTime').value = start.toTimeString().slice(0,5);
+                document.getElementById('eventEndTime').value = end.toTimeString().slice(0,5);
+                document.getElementById('eventArea').value = event.extendedProperties?.private?.area || '';
+                document.getElementById('eventObs').value = event.description || '';
+
+                editingEventId = eventId;
+
+                showMessage('success', '✏️ Editando evento. Modificá y guardá para aplicar cambios');
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            } catch (err) {
+                console.error('Error editing event:', err);
+                showMessage('error', '❌ No se pudo cargar el evento para editar');
+            }
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('eventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('eventTitle').value;
+            const date = document.getElementById('eventDate').value;
+            const startTime = document.getElementById('eventStartTime').value;
+            const endTime = document.getElementById('eventEndTime').value;
+            const area = document.getElementById('eventArea').value;
+            const obs = document.getElementById('eventObs').value;
+
+            const startDateTime = new Date(`${date}T${startTime}`);
+            const endDateTime = new Date(`${date}T${endTime}`);
+            const now = new Date();
+            const status = endDateTime < now ? 'completed' : 'pending';
+
+            if (startDateTime < now) {
+                showMessage('error', '❌ No se pueden crear eventos en fechas u horarios pasados');
+                return;
+            }
+
+            if (endDateTime <= startDateTime) {
+                showMessage('error', '❌ La hora de finalización debe ser mayor a la de inicio');
+                return;
+            }
+
+            const event = {
+                'summary': title,
+                'description': obs,
+                'colorId': AREA_COLORS[area] || '7',
+                'start': {
+                    'dateTime': startDateTime.toISOString(),
+                    'timeZone': 'America/Argentina/Buenos_Aires'
+                },
+                'end': {
+                    'dateTime': endDateTime.toISOString(),
+                    'timeZone': 'America/Argentina/Buenos_Aires'
+                },
+                'extendedProperties': {
+                    'private': {
+                        'area': area,
+                        'status': status
+                    }
+                }
+            };
+
+            try {
+                if (editingEventId) {
+                    await gapi.client.calendar.events.update({
+                        calendarId: '040e077de012fb2e93cdc723d706fbc8d1863695f3b039b4e5ba1c8d129f0c76@group.calendar.google.com',
+                        eventId: editingEventId,
+                        resource: event
+                    });
+                    showMessage('success', '✏️ Evento actualizado correctamente');
+                    editingEventId = null;
+                } else {
+                    await gapi.client.calendar.events.insert({
+                        calendarId: '040e077de012fb2e93cdc723d706fbc8d1863695f3b039b4e5ba1c8d129f0c76@group.calendar.google.com',
+                        resource: event
+                    });
+                    showMessage('success', '✅ Evento creado exitosamente');
+                }
+                document.getElementById('eventForm').reset();
+                loadEvents();
+            } catch (err) {
+                console.error('Error creating event:', err);
+                showMessage('error', '❌ Error al crear el evento');
+            }
+        });
+
+        function showMessage(type, message) {
+            const messageDiv = document.getElementById('formMessage');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            setTimeout(() => {
+                messageDiv.className = '';
+                messageDiv.textContent = '';
+            }, 3000);
+        }
+
+        // Establecer fecha mínima como hoy
+        document.getElementById('eventDate').min = new Date().toISOString().split('T')[0];
+
+        // Inicializar cuando se cargue la página
+        window.onload = () => {
+            gapiLoaded();
+            gisLoaded();
+        };
+    </script>
+</body>
+</html>
