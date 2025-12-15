@@ -676,6 +676,13 @@
             gapiLoaded();
             gisLoaded();
         };
+
+        // Auto-actualizar eventos cada 30 minutos
+        setInterval(() => {
+            if (gapi?.client?.calendar) {
+                loadEvents();
+            }
+        }, 1800000); // 30 minutos
     </script>
 </body>
 </html>
