@@ -600,19 +600,22 @@
             const obs = document.getElementById('eventObs').value;
 
             const startDateTime = new Date(`${date}T${startTime}`);
-            const endDateTime = new Date(`${date}T${endTime}`);
+            let endDateTime = new Date(`${date}T${endTime}`);
             const now = new Date();
-            const status = endDateTime < now ? 'completed' : 'pending';
 
+            // ❌ No permitir inicio en el pasado
             if (startDateTime < now) {
                 showMessage('error', '❌ No se pueden crear eventos en fechas u horarios pasados');
                 return;
             }
 
+            // ✅ Si la hora de fin es menor o igual, se asume que termina al día siguiente
             if (endDateTime <= startDateTime) {
-                showMessage('error', '❌ La hora de finalización debe ser mayor a la de inicio');
-                return;
+                endDateTime.setDate(endDateTime.getDate() + 1);
             }
+
+            // Estado automático
+            const status = endDateTime < now ? 'completed' : 'pending';
 
             const event = {
                 'summary': title,
